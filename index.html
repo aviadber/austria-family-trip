@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>משפחת ברמן באוסטריה | 19.9-2.10.2026</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{
+  --ink:#1f2937; --muted:#6b7280; --bg:#f6f3ec; --card:#ffffff;
+  --accent:#0e7490; --accent-soft:#e0f2f6; --warn:#92400e; --warn-bg:#fef3c7;
+  --border:#e5e0d4; --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 14px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:"Heebo","Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+
+/* Header */
+header{background:linear-gradient(135deg,#0e7490 0%,#155e75 60%,#1e3a5f 100%);color:#fff;padding:34px 0 26px}
+header h1{margin:0 0 4px;font-size:clamp(24px,4vw,34px);font-weight:800;letter-spacing:.2px}
+header .sub{opacity:.92;font-size:clamp(14px,2vw,17px);margin-bottom:16px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:5px 12px;font-size:13px;white-space:nowrap}
+
+/* Layout */
+.layout{display:grid;grid-template-columns:1fr;gap:18px;padding:22px 0 8px}
+@media(min-width:900px){.layout{grid-template-columns:7fr 5fr;align-items:start}}
+
+/* Map */
+.map-card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;position:sticky;top:14px}
+#map{height:min(72vh,640px);min-height:340px;width:100%}
+.map-hint{padding:8px 14px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--border);background:#faf8f2}
+.leaflet-popup-content{direction:rtl;text-align:right;font-family:inherit}
+.leaflet-tooltip{direction:rtl;font-family:inherit}
+
+/* Content column */
+.content{min-width:0}
+.notice{background:var(--warn-bg);color:var(--warn);border:1px solid #f3d27a;border-radius:12px;padding:12px 14px;font-size:14px;margin-bottom:18px}
+.notice b{display:block;margin-bottom:2px}
+
+h2.sec{font-size:19px;margin:22px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent);display:inline-block}
+
+/* Booking base cards */
+.bases{display:grid;gap:10px}
+.base{background:var(--card);border:1px solid var(--border);border-right:4px solid var(--accent);border-radius:10px;padding:10px 14px;box-shadow:var(--shadow);font-size:14px}
+.base b{color:var(--accent)}
+.base small{color:var(--muted)}
+
+/* Day cards */
+.day{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden}
+.day-head{display:flex;align-items:baseline;gap:10px;padding:11px 14px;background:var(--accent-soft);border-bottom:1px solid var(--border)}
+.day-head .date{font-weight:800;color:#0b5563;font-size:15px;white-space:nowrap}
+.day-head .title{font-weight:600;font-size:15px}
+.day ul{margin:0;padding:10px 30px 12px 14px;font-size:14px}
+.day ul li{margin:3px 0}
+.day a.maplink{color:var(--accent);text-decoration:none;font-size:13px}
+.day a.maplink:hover{text-decoration:cursor;text-decoration:underline}
+
+/* Tips */
+.tips{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:6px 0;margin-bottom:14px}
+.tips ul{margin:0;padding:8px 30px 10px 14px;font-size:14px}
+.tips li{margin:6px 0}
+
+footer{color:var(--muted);font-size:12.5px;text-align:center;padding:18px 0 30px}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>משפחת ברמן באוסטריה</h1>
+    <div class="sub">מסלול משפחתי · 19.9 – 2.10.2026 · שבועיים בזלצבורגקאמרגוט ובטירול</div>
+    <div class="chips">
+      <span class="chip">✈️ טיסה חזרה 6H250 · שישי 2.10 · 10:05 מזלצבורג</span>
+      <span class="chip">🏨 לרמוס 27.9–1.10 · Alpenrose</span>
+      <span class="chip">🏨 זלצבורג 1–2.10 · Auersperg</span>
+      <span class="chip">🚗 החזרת רכב 07:30–08:00 ב-2.10</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap layout">
+
+  <div class="map-card">
+    <div id="map"></div>
+    <div class="map-hint">לחצו על סמן לפרטים. המפה דורשת חיבור אינטרנט לטעינת אריחי OpenStreetMap.</div>
+  </div>
+
+  <div class="content">
+
+    <div class="notice">
+      <b>שתי נקודות לתשומת לב לפני היציאה</b>
+      ① סתירה דחופה: בהזמנה, החזרת הרכב ב-2.10 רשומה 11:00 — אחרי המראת 10:05. לתאם מול אופרן/Budget החזרה ב-07:30–08:00.
+      ② ל-27.9 נדרש אישור כתוב מאופרן לכניסה לגרמניה.
+    </div>
+
+    <h2 class="sec">הבסיסים שמצאנו בהזמנות</h2>
+    <div class="bases">
+      <div class="base"><b>27.9–1.10 · Alpenrose Familux Resort, לרמוס.</b><br><small>סוויטת Pure, הכל כלול. הזמנה מאושרת.</small></div>
+      <div class="base"><b>1.10–2.10 · Hotel &amp; Villa Auersperg, זלצבורג.</b><br><small>חדר משפחתי; צ'ק-אין מ-14:30. חניה €20 ובכפוף לזמינות.</small></div>
+      <div class="base"><b>19.9 18:00 · Dorf-Alm, סנט וולפגנג.</b> <small>שולחן מאושר ל-10.</small></div>
+      <div class="base"><b>20.9 18:30 · Hias Pizza &amp; Event, וולפגנגזה.</b> <small>שולחן מאושר ל-10.</small></div>
+      <div class="base"><small>לא נמצאה הזמנת לינה ל-19–27.9, ולכן הימים האלה בנויים מבסיס באזור וולפגנגזה בהתאם לשתי הזמנות המסעדה. אם המלון בפועל במקום אחר, זמני הנסיעה בחלק הזה ישתנו.</small></div>
+    </div>
+
+    <h2 class="sec">יום אחר יום</h2>
+
+    <div class="day"><div class="day-head"><span class="date">19.9 · שבת</span><span class="title">נחיתה והתאקלמות</span></div>
+      <ul>
+        <li>נחיתה בזלצבורג, איסוף רכב ונסיעה לסנט וולפגנג, כ-50–60 דק'.</li>
+        <li>אחרי מנוחה: טיילת האגם וגינת משחקים קצרה.</li>
+        <li>18:00 Dorf-Alm, הזמנה מאושרת ל-10. לא להוסיף אטרקציה גדולה ליום הטיסה.</li>
+      </ul></div>
+
+    <div class="day"><div class="day-head"><span class="date">20.9 · ראשון</span><span class="title">יום אגם רגוע</span></div>
+      <ul>
+        <li>שיט קצר בוולפגנגזה או טיילת סנט וולפגנג-ריד.</li>
+        <li>צהריים ומנוחה במלון; אחר הצהריים חוף/גן משחקים לפי מזג האוויר.</li>
+        <li>18:30 Hias Pizza &amp; Event, הזמנה מאושרת ל-10.</li>
+      </ul></div>
+
+    <div class="day"><div class="day-head"><span class="date">21.9 · שני</span><span class="title">שאפברג ביום בהיר</span></div>
+      <ul>
+        <li>רכבת SchafbergBahn לפסגה, רק אם הראות טובה; להזמין שעה מראש לקבוצה גדולה.</li>
+        <li>חלופה קלה: שיט באגם + סנט גילגן והרכבל Zwölferhorn, אם פועל.</li>
+        <li>שכבות חמות ועגלה קומפקטית; בפסגה קר ורוחי גם כשנעים למטה.</li>
+      </ul></div>
+
+    <div class="day"><div class="day-head"><span class="date">22.9 · שלישי</span><span class="title">הלברון וגן החיות</span></div>
+      <ul>
+        <li>נסיעה לארמון הלברון, כ-50–60 דק'. מזרקות השעשועים מעולות לילדים — להביא בגדי החלפה.</li>
+        <li>גן החיות של זלצבורג צמוד ומתאים לעוד 2–3 שעות.</li>
+        <li>בגשם: Haus der Natur בזלצבורג במקום שניהם.</li>
+      </ul></div>
+
+    <div class="day"><div class="day-head"><span class="date">23.9 · רביעי</span><span class="title">באד אישל בקצב קל</span></div>
+      <ul>
+        <li>נסיעה כ-25–35 דק'; מרכז העיר, Konditorei Zauner ופארק Kurpark.</li>
+        <li>אם בהיר והילדים באנרגיה: רכבל Katrin, בכפוף לפעילות ולרוח.</li>
+        <li>יום קצר בכוונה אחרי יום זלצבורג.</li>
+      </ul></div>
+
+    <div class="day"><div class="day-head"><span class="date">24.9 · חמישי</span><span class="title">האלשטאט ומכרה המלח</span></div>
+      <ul>
+        <li>נסיעה כ-40–50 דק'. להתחיל מוקדם לפני העומס.</li>
+        <li>Salzwelten Hallstatt וה-Skywalk; להזמין כרטיסים מראש ל-10 ולבדוק מגבלות גיל/עגלה.</li>
+        <li>אם המכרה מלא או מזג האוויר גרוע: מוזיאון האלשטאט, שיט קצר וחזרה מוקדמת.</li>
+      </ul></div>
+
+    <div class="day"><div class="day-head"><span class="date">25.9 · שישי</span><span class="title">גוסאוזה</span></div>
+      <ul>
+        <li>Vorderer Gosausee, כ-45–55 דק'. הליכה שטוחה וקצרה על שפת האגם, בלי להתחייב להקפה מלאה.</li>
+        <li>עצירת משחק/פיקניק; נוף מצוין ביום בהיר.</li>
+        <li>בגשם: Therme/בריכה מקורה באזור באד אישל או יום מלון.</li>
+      </ul></div>
+
+    <div class="day"><div class="day-head"><span class="date">26.9 · שבת</span><span class="title">זלצבורג למשפחה</span></div>
+      <ul>
+        <li>נסיעה כ-50–60 דק'. Haus der Natur בבוקר, מתאים מאוד לגילאי 3–6 ולגשם.</li>
+        <li>אחר כך העיר העתיקה וגני מיראבל; אם נשאר כוח, מוזיאון הצעצועים.</li>
+        <li>לא לדחוס גם את המצודה אלא אם כולם רוצים. חניה בחניון מרכזי והליכה יחד נוחה יותר ל-10.</li>
+      </ul></div>
+
+    <div class="day"><div class="day-head"><span class="date">27.9 · ראשון</span><span class="title">מעבר ללרמוס דרך גרמניה</span></div>
+      <ul>
+        <li>צ'ק-אאוט מוקדם ונסיעה דרך אזור ברכטסגאדן, כ-3 שעות נטו עד לרמוס לפני עצירה.</li>
+        <li>עצירה במכרה המלח Berchtesgaden: מקורה, משפחתי, אין מגבלת גיל רשמית; להזמין סבב מראש ולהביא שכבה חמה.</li>
+        <li>הגעה ל-Alpenrose Familux, צ'ק-אין ומתקני המלון. זה גם היום שבו צריך אישור כתוב מאופרן לכניסה לגרמניה.</li>
+      </ul></div>
+
+    <div class="day"><div class="day-head"><span class="date">28.9 · שני</span><span class="title">יום Resort</span></div>
+      <ul>
+        <li>להישאר ב-Alpenrose: בריכה, מועדוני ילדים, אזורי משחק ופעילות משפחתית של המלון.</li>
+        <li>טיול קצר בלרמוס בלבד אם רוצים אוויר.</li>
+        <li>יום התאוששות חשוב אחרי המעבר, במיוחד עם קבוצה גדולה.</li>
+      </ul></div>
+
+    <div class="day"><div class="day-head"><span class="date">29.9 · שלישי</span><span class="title">צוגשפיצה או ארוולד</span></div>
+      <ul>
+        <li>ביום בהיר: Tiroler Zugspitzbahn מארוולד, כ-10–15 דק' נסיעה; לבדוק רוח/פעילות בבוקר.</li>
+        <li>לא לתכנן הליכה ארוכה בגובה. לקחת שכבות, כובעים ואוכל לילדים.</li>
+        <li>בענן/רוח: Wasserwelt/בריכת המלון וטיול קצר סביב Ehrwald.</li>
+      </ul></div>
+
+    <div class="day"><div class="day-head"><span class="date">30.9 · רביעי</span><span class="title">פלאנזה ופיסן</span></div>
+      <ul>
+        <li>Plansee, כ-30–40 דק': עצירות נוף והליכה קצרה על שפת האגם.</li>
+        <li>המשך לפיסן, כ-25 דק', עיר עתיקה וארוחה מוקדמת.</li>
+        <li>Neuschwanstein רק אם מזמינים מראש ומוכנים לעלייה/שאטל; לקבוצה של 10 ושני ילדים קטנים עדיף לראות מבחוץ ולא לבנות על סיור ארוך.</li>
+      </ul></div>
+
+    <div class="day"><div class="day-head"><span class="date">1.10 · חמישי</span><span class="title">חזרה לזלצבורג</span></div>
+      <ul>
+        <li>צ'ק-אאוט מלרמוס ונסיעה לזלצבורג דרך גרמניה, כ-2:45–3:15 נטו בלי עצירות.</li>
+        <li>עצירה אחת בלבד בדרך, למשל טיילת קצרה באגם כימזה, כדי להגיע ל-Auersperg אחרי 14:30.</li>
+        <li>ערב רגוע בגני מיראבל/מרכז זלצבורג ואריזה לטיסה.</li>
+      </ul></div>
+
+    <div class="day"><div class="day-head"><span class="date">2.10 · שישי</span><span class="title">טיסה הביתה</span></div>
+      <ul>
+        <li>טיסת 6H250 אמורה להמריא ב-10:05. לכוון להחזרת הרכב בערך 07:30–08:00.</li>
+        <li>בהזמנה החזרת הרכב רשומה 11:00 — אחרי ההמראה. לתקן/לתאם מול אופרן או Budget לפני היציאה.</li>
+        <li>אין מקום לפעילות ביום הזה.</li>
+      </ul></div>
+
+    <h2 class="sec">כללי שימוש</h2>
+    <div class="tips">
+      <ul>
+        <li>בערב שלפני כל יום הרים: לבדוק תחזית, רוח, עננות ושעות פעילות עונתיות.</li>
+        <li>לקבוצה של 10: להזמין מראש מכרות, רכבות הרים וסיורים; במסעדות לשמור את אישורי ההזמנה.</li>
+        <li>תמיד להחזיק חלופת גשם: Haus der Natur, מכרה המלח Berchtesgaden, מתקני Alpenrose או בריכה מקורה.</li>
+        <li>Eisriesenwelt לא נכנס לתוכנית: כ-700 מדרגות, עלייה תלולה וטמפרטורה סביב 0°C במערה — לא התאמה טובה לילדים הקטנים ולקצב של הקבוצה.</li>
+      </ul>
+    </div>
+
+    <footer>מסלול משפחת ברמן · אוסטריה וגרמניה · ספטמבר–אוקטובר 2026 · מפה: OpenStreetMap</footer>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map=L.map('map').setView([47.65,12.4],8);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map);
+const data=[
+["שדה התעופה זלצבורג",47.7933,13.0043,"19.9 / 2.10","איסוף והחזרת הרכב; טיסה חזרה 10:05"],
+["סנט וולפגנג",47.7393,13.4467,"19-26.9","בסיס מתוכנן לשבוע הראשון לפי שתי הזמנות המסעדה; הלינה עצמה לא נמצאה"],
+["Dorf-Alm",47.7389,13.448,"19.9 18:00","שולחן מאושר ל-10"],
+["Hias Pizza & Event",47.7345,13.4763,"20.9 18:30","שולחן מאושר ל-10"],
+["SchafbergBahn",47.7398,13.4405,"21.9","רכבת הרים; רק ביום עם ראות טובה"],
+["הלברון",47.7623,13.0608,"22.9","מזרקות השעשועים ובגדי החלפה"],
+["גן החיות זלצבורג",47.7569,13.0635,"22.9","צמוד להלברון"],
+["באד אישל",47.711,13.6234,"23.9","Kurpark, זאונר, יום קל"],
+["Salzwelten Hallstatt",47.5556,13.647,"24.9","מכרה מלח ו-Skywalk; להזמין מראש"],
+["Gosausee",47.5335,13.496,"25.9","הליכה קצרה ושטוחה על שפת האגם"],
+["Haus der Natur",47.8001,13.0392,"26.9 / גשם","מוזיאון מדע וטבע לילדים"],
+["גני מיראבל",47.805,13.0417,"26.9 / 1.10","עצירה קלה בעיר"],
+["מכרה המלח ברכטסגאדן",47.6395,13.017,"27.9","עצירת מעבר מקורה; להזמין מראש"],
+["Alpenrose Familux Resort",47.4039,10.8808,"27.9-1.10","הזמנה מאושרת, Pure Suite, הכל כלול"],
+["Tiroler Zugspitzbahn",47.4236,10.9411,"29.9","רק ביום בהיר וללא רוח חזקה"],
+["Plansee",47.4817,10.8238,"30.9","אגם והליכה קצרה"],
+["פיסן",47.5696,10.7004,"30.9","עיר עתיקה וארוחה מוקדמת"],
+["כימזה",47.8567,12.4167,"1.10 אופציונלי","עצירת התרעננות בדרך לזלצבורג"],
+["Hotel & Villa Auersperg",47.8074,13.05,"1-2.10","הזמנה מאושרת; צ'ק-אין 14:30; חניה בכפוף לזמינות"]];
+const group=[];
+data.forEach((p,i)=>{
+  const m=L.marker([p[1],p[2]]).addTo(map).bindPopup('<b>'+p[0]+'</b><br>'+p[3]+'<br>'+p[4]);
+  m.bindTooltip((i+1)+'. '+p[0]);
+  group.push(m);
+});
+map.fitBounds(L.featureGroup(group).getBounds().pad(.08));
+</script>
+</body>
+</html>
